@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập Tương Tác - Ms Lê Hằng English</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #8854C0;
+            --secondary: #FDCB6E;
+            --accent: #00C9A7;
+            --correct: #00D26A;
+            --wrong: #FF4757;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #8854C0, #E8A7A1, #00C9A7, #FDCB6E);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: relative;
+            padding: 20px 10px;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* SVG Decorative Floating Pattern Overlays */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M15,15 L25,25 M25,15 L15,25' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' opacity='0.3'/%3E%3Ccircle cx='80' cy='30' r='10' fill='none' stroke='%23ffffff' stroke-width='3' opacity='0.25'/%3E%3Cpath d='M40,90 Q50,75 60,90 T80,90' fill='none' stroke='%23ffffff' stroke-width='3' opacity='0.3'/%3E%3Cg transform='translate(90,80) scale(0.6)' fill='%23ffffff' opacity='0.2'%3E%3Cpath d='M0,-20 L5,-5 L20,-5 L7,5 L12,20 L0,10 L-12,20 L-7,5 L-20,-5 L-5,-5 Z'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            border: 3px solid var(--primary);
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 900;
+        }
+
+        .alert-box {
+            background: #FFF9E6;
+            border: 3px solid #FFE0B2;
+            border-left: 8px solid #FFB300;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 10px;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #b7791f;
+            line-height: 1.5;
+        }
+
+        .alert-title {
+            font-weight: 900;
+            text-align: center;
+            display: block;
+            color: #d69e2e;
+            margin-bottom: 5px;
+        }
+
+        .exercise-title {
+            background: var(--secondary);
+            color: #5d4037;
+            padding: 12px 20px;
+            border-radius: 15px;
+            margin: 35px 0 15px 0;
+            font-weight: 900;
+            font-size: 1.15rem;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+            border: 2px solid rgba(0,0,0,0.05);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0 rgba(0, 0, 0, 0.15);
+            border: 3px solid #e2e8f0;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        /* Options layout */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .option-btn {
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            padding: 14px 20px;
+            border-radius: 18px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 6px 0 #cbd5e1;
+            color: #4a5568;
+            position: relative;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #cbd5e1;
+            background-color: #f8fafc;
+        }
+
+        .option-btn:active:not(.disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #cbd5e1;
+        }
+
+        /* Correct/Incorrect Classes */
+        .option-btn.correct-ans {
+            background-color: var(--correct) !important;
+            border-color: #00aa54 !important;
+            box-shadow: 0 4px 0 #00aa54 !important;
+            color: white !important;
+        }
+
+        .option-btn.wrong-ans {
+            background-color: var(--wrong) !important;
+            border-color: #cc2e3b !important;
+            box-shadow: 0 4px 0 #cc2e3b !important;
+            color: white !important;
+        }
+
+        /* Explanation box style */
+        .explanation {
+            margin-top: 20px;
+            background: #f0fdf4;
+            border: 3px dashed var(--accent);
+            border-radius: 18px;
+            padding: 18px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .explanation h4 {
+            color: var(--primary);
+            font-weight: 900;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .explanation p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        .explanation-section-title {
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 6px;
+        }
+
+        /* Shake animation for wrong selection */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Submit Footer Dashboard */
+        .footer-dashboard {
+            text-align: center;
+            margin: 40px 0 60px 0;
+        }
+
+        .submit-all-btn {
+            background: #ff7675;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 900;
+            padding: 15px 40px;
+            border-radius: 25px;
+            border: 4px solid #d63031;
+            box-shadow: 0 8px 0 #d63031;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .submit-all-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 11px 0 #d63031;
+        }
+
+        .submit-all-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #d63031;
+        }
+
+        /* Modal Popup System */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            border: 5px solid var(--primary);
+            box-shadow: 0 15px 0 rgba(0,0,0,0.3);
+            animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-score {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 15px 0;
+        }
+
+        .modal-feedback {
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.6;
+            color: #4a5568;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .close-modal-btn {
+            margin-top: 20px;
+            background: var(--accent);
+            color: white;
+            border: 3px solid #00a387;
+            box-shadow: 0 5px 0 #00a387;
+            padding: 10px 30px;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Sub-cards inside texts or sequence options mapping */
+        .sub-segment {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            border-left: 4px solid var(--primary);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>Giáo viên tạo: Ms Lê Hằng English</h2>
+        <div class="alert-box">
+            <span class="alert-title">⚠️ LỜI NHẮC CỰC KỲ QUAN TRỌNG ⚠️</span>
+            Chỉ có đọc kỹ giải thích ngay sau mỗi câu, sau đó ghi lại từ vựng/cấu trúc mới vào vở để học thì mới thực sự giỏi lên. Làm cho xong mà không đọc giải thích hay đọc qua loa không ghi chép thì chỉ tốn thời gian vô ích!<br>
+            <strong>* Kéo tới đâu, làm tới đó! *</strong>
+        </div>
+    </header>
+
+    <div id="quiz-wrapper"></div>
+
+    <div class="footer-dashboard">
+        <button class="submit-all-btn" onclick="submitFullQuiz()">NỘP BÀI TỔNG KẾT</button>
+    </div>
+</div>
+
+<!-- Score Modal -->
+<div class="modal" id="scoreModal">
+    <div class="modal-content">
+        <h2 style="font-weight: 900; color: #ff7675;">🎉 KẾT QUẢ BÀI THI 🎉</h2>
+        <div class="modal-score" id="scoreDisplay">0/0</div>
+        <div class="modal-feedback" id="feedbackDisplay"></div>
+        <button class="close-modal-btn" onclick="closeModal()">Làm Lại / Xem Tiếp</button>
+    </div>
+</div>
+
+<script>
+// Web Audio API Sound Generation
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type) {
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if (type === 'correct') {
+        // Ding sound
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+    } else {
+        // Wrong sound: "Téo tèo tèo" down low
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+    }
+}
+
+// Database questions - Complete Data Integrity
+const quizData = [
+    // Exercise 24
+    {
+        id: "ex24_1",
+        exercise: "Exercise 24: Rearrange the words to make complete sentences.",
+        question: "Chọn câu sắp xếp đúng cho các từ sau: to grab our attention/ often use various strategies/ to grab our attention/ and keep us engaged, making it difficult to concentrate/ Social media platforms/. /",
+        options: [
+            "Social media platforms often use various strategies to grab our attention and keep us engaged, making it difficult to concentrate on other activities.",
+            "Social media platforms often use various strategies and keep us engaged to grab our attention, making it difficult to concentrate on other activities.",
+            "Social media platforms make it difficult to concentrate on other activities often use various strategies to grab our attention and keep us engaged.",
+            "Often use various strategies to grab our attention and keep us engaged social media platforms making it difficult to concentrate."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Các nền tảng mạng xã hội thường sử dụng nhiều chiến lược khác nhau để thu hút sự chú ý của chúng ta và giữ chúng ta tương tác, khiến việc tập trung vào các hoạt động khác trở nên khó khăn.",
+            optionsDetails: "A. Đáp án chuẩn chỉnh ngữ pháp và ngữ nghĩa gốc.\nB. Sai cấu trúc liên kết ngữ nghĩa.\nC. Đảo lộn vị trí chủ ngữ và động từ chính một cách vô nghĩa.\nD. Sắp xếp sai hoàn toàn vị trí mệnh đề chính.",
+            whyCorrect: "Mệnh đề chính là 'Social media platforms' (Chủ ngữ) + 'often use various strategies' (Động từ & Tân ngữ) phối hợp hợp lý với cấu trúc chỉ mục đích 'to grab our attention' và hệ quả 'making it difficult to concentrate on...'.",
+            whyWrong: "Các phương án khác phá vỡ trật tự cú pháp tiếng Anh chuẩn (Chủ ngữ + Động từ + Tân ngữ) hoặc làm lệch nghĩa hoàn toàn của tổ hợp từ đề bài."
+        }
+    },
+    {
+        id: "ex24_2",
+        exercise: "Exercise 24: Rearrange the words to make complete sentences.",
+        question: "Chọn câu sắp xếp đúng cho các từ sau: keep distracting me/ social media platforms /focus on studying/ when notifications from/ It can be challenging to/. /",
+        options: [
+            "It can be challenging to focus on studying when notifications from social media platforms keep distracting me.",
+            "When notifications from social media platforms keep distracting me focus on studying it can be challenging to.",
+            "Social media platforms keep distracting me when notifications from it can be challenging to focus on studying.",
+            "It can be challenging to keep distracting me when notifications from social media platforms focus on studying."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Thật là thử thách/khó khăn để tập trung vào việc học khi các thông báo từ các nền tảng mạng xã hội liên tục làm tôi xao nhãng.",
+            optionsDetails: "A. Cấu trúc chuẩn xác xuôi tai lý thuyết học thuật.\nB. Đưa trạng ngữ lên đầu nhưng mệnh đề sau bị gãy ngữ pháp.\nC. Biến mạng xã hội thành chủ ngữ trực tiếp gây nhiễu cho cụm từ chỉ thời điểm.\nD. Hoán đổi sai ngữ cảnh giữa hành động tập trung và xao nhãng.",
+            whyCorrect: "Áp dụng cấu trúc chủ ngữ giả chuẩn chỉnh: 'It + be + adjective + to-infinitive' (It can be challenging to focus on studying...) kết hợp hoàn hảo với mệnh đề chỉ thời gian bổ trợ phía sau.",
+            whyWrong: "Cắt xén hoặc dịch chuyển sai vị trí cụm động từ đi kèm chủ ngữ thực tế gây nghẽn mạch ngữ nghĩa."
+        }
+    },
+    {
+        id: "ex24_3",
+        exercise: "Exercise 24: Rearrange the words to make complete sentences.",
+        question: "Chọn câu sắp xếp đúng cho các từ sau: is a growing concern in today's digital age,/ to their smartphones and the internet/ Teen social media addiction/ where individuals are constantly connected/. /",
+        options: [
+            "Teen social media addiction is a growing concern in today's digital age, where individuals are constantly connected to their smartphones and the internet.",
+            "In today's digital age where individuals are constantly connected teen social media addiction is a growing concern to their smartphones and the internet.",
+            "Teen social media addiction to their smartphones and the internet is a growing concern where individuals are constantly connected in today's digital age.",
+            "Where individuals are constantly connected to their smartphones and the internet teen social media addiction is a growing concern."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Sự nghiện mạng xã hội ở thanh thiếu niên là một mối lo ngại ngày càng gia tăng trong thời đại kỹ thuật số ngày nay, nơi mà các cá nhân liên tục kết nối với điện thoại thông minh và mạng internet.",
+            optionsDetails: "A. Bản dịch phân tách rõ ràng thành tố bổ trợ và mệnh đề quan hệ.\nB. Sai vị trí bổ ngữ cuối câu.\nC. Đặt sai vị trí của ngữ bổ nghĩa khiến câu trở nên rườm rà thiếu logic.\nD. Sử dụng đại từ quan hệ đầu câu khi chưa có mệnh đề tiền đề.",
+            whyCorrect: "Cụm danh từ lớn làm chủ ngữ chính: 'Teen social media addiction'. Sử dụng mệnh đề quan hệ bắt đầu bằng trạng từ 'where' giải thích cho danh từ thời gian 'today's digital age'. Cụm cố định: 'connected to something'.",
+            whyWrong: "Tách rời cụm 'connected to their smartphones' làm mất đi cấu trúc gốc của giới từ."
+        }
+    },
+    {
+        id: "ex24_4",
+        exercise: "Exercise 24: Rearrange the words to make complete sentences.",
+        question: "Chọn câu sắp xếp đúng cho các từ sau: my ability to focus on other aspects of my life/ for browsing social media/ to set aside dedicated time slots/ so that/ I find it helpful/ it doesn't interfere with/. /",
+        options: [
+            "I find it helpful to set aside dedicated time slots for browsing social media so that it doesn't interfere with my ability to focus on other aspects of my life.",
+            "I find it helpful to focus on other aspects of my life so that it doesn't interfere with dedicated time slots for browsing social media.",
+            "To set aside dedicated time slots for browsing social media I find it helpful so that it doesn't interfere with my ability.",
+            "So that it doesn't interfere with my ability to focus on other aspects of my life I find it helpful to set aside dedicated time slots."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Tôi thấy hữu ích khi dành ra các khoảng thời gian riêng biệt cho việc lướt mạng xã hội để nó không can thiệp/ảnh hưởng đến khả năng tập trung của tôi vào các khía cạnh khác của cuộc sống.",
+            optionsDetails: "A. Đúng cấu trúc ngữ pháp nâng cao 'find it + adj + to V'.\nB. Đảo ngược hoàn toàn logic mục đích hành động.\nC. Sắp xếp rời rạc cấu trúc giả định.\nD. Đặt mệnh đề chỉ kết quả 'so that' ở đầu câu là sai quy tắc cú pháp.",
+            whyCorrect: "Mẫu câu cấu trúc: 'Find + it + adjective + to-infinitive' (Tôi thấy thế nào để làm việc gì đó). Cụm động từ 'interfere with' (can thiệp, gây trở ngại cho) đi liền với danh từ kết quả.",
+            whyWrong: "Cấu trúc phản ánh sai lệch ý đồ người viết, các cụm từ bị tách rời vô căn cứ."
+        }
+    },
+    {
+        id: "ex24_5",
+        exercise: "Exercise 24: Rearrange the words to make complete sentences.",
+        question: "Chọn câu sắp xếp đúng cho các từ sau: and concentrate on one thing/ to prioritize tasks/ at a time to maximize productivity/ It's important/. /",
+        options: [
+            "It's important to prioritize tasks and concentrate on one thing at a time to maximize productivity.",
+            "To prioritize tasks and concentrate on one thing it's important at a time to maximize productivity.",
+            "It's important to maximize productivity at a time and concentrate on one thing to prioritize tasks.",
+            "Concentrate on one thing at a time to prioritize tasks it's important to maximize productivity."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Việc ưu tiên các nhiệm vụ và tập trung vào một thứ tại một thời điểm là rất quan trọng để tối đa hóa năng suất.",
+            optionsDetails: "A. Cấu trúc câu giả định chuẩn xác hàng đầu.\nB. Chèn cụm tính từ sai vị trí cú pháp.\nC. Sai mạch logic hành động (Phải tập trung trước rồi mới đạt năng suất sau).\nD. Câu bị lắp ghép chắp vá không có cấu trúc đầu đuôi cụ thể.",
+            whyCorrect: "Sử dụng cấu trúc nền tảng 'It is + adjective + to-infinitive'. Hai động từ nguyên mẫu được nối liền bởi từ 'and' song song: 'to prioritize... and concentrate...'. Cụm từ chỉ mục đích đặt cuối: 'to maximize...'.",
+            whyWrong: "Thay đổi vị trí của các từ liên kết làm phá vỡ tính liên kết song hành của cấu trúc câu."
+        }
+    },
+
+    // Exercise 25
+    {
+        id: "ex25_1",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: My family hasn't been to New York. We have been to Paris.",
+        options: [
+            "My family hasn't been to New York, but we have been to Paris.",
+            "My family hasn't been to New York, so we have been to Paris.",
+            "My family hasn't been to New York, and we have been to Paris.",
+            "My family hasn't been to New York, or we have been to Paris."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Gia đình tôi chưa từng đến New York, nhưng chúng tôi đã đến Paris.",
+            optionsDetails: "A. Sử dụng 'but' biểu thị sự tương phản chính xác.\nB. Dùng 'so' chỉ nguyên nhân kết quả (Sai).\nC. Dùng 'and' chỉ sự bổ sung (Không hợp ngữ cảnh phản nghĩa).\nD. Dùng 'or' chỉ sự lựa chọn (Sai).",
+            whyCorrect: "Hai câu gốc mang sắc thái đối lập nhau rõ rệt (Một bên chưa đi, một bên đã đi rồi), do đó liên từ kết hợp hoàn hảo nhất là 'but' (nhưng).",
+            whyWrong: "Các liên từ khác (so, and, or) phản ánh sai mối quan hệ logic ngữ nghĩa giữa hai vế câu."
+        }
+    },
+    {
+        id: "ex25_2",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: She is my favourite singer. She is also a good actress.",
+        options: [
+            "She is my favourite singer, and she is also a good actress.",
+            "She is my favourite singer, but she is also a good actress.",
+            "She is my favourite singer, so she is also a good actress.",
+            "She is my favourite singer, for she is also a good actress."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Cô ấy là ca sĩ yêu thích của tôi, và cô ấy cũng là một diễn viên giỏi.",
+            optionsDetails: "A. Sử dụng 'and' bổ sung thông tin tích cực.\nB. Dùng 'but' tạo tương phản không đáng có.\nC. Dùng 'so' thể hiện kết quả sai nghĩa.\nD. Dùng 'for' thể hiện lý do không hợp lý.",
+            whyCorrect: "Hai vế câu cùng cung cấp thêm thông tin đồng thuận mang tính khen ngợi, bổ sung nghề nghiệp cho cùng một đối tượng, vì vậy ta dùng liên từ kết hợp 'and'.",
+            whyWrong: "Sử dụng các liên từ đối nghịch hoặc chỉ nguyên nhân hệ quả sẽ làm biến đổi ý nghĩa đơn thuần của câu gốc."
+        }
+    },
+    {
+        id: "ex25_3",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: Students can choose to carry out a project on environmental issues. They can conduct research on the topic of renewable energy.",
+        options: [
+            "Students can choose to carry out a project on environmental issues or they can conduct research on the topic of renewable energy.",
+            "Students can choose to carry out a project on environmental issues, but they can conduct research on the topic of renewable energy.",
+            "Students can choose to carry out a project on environmental issues, so they can conduct research on the topic of renewable energy.",
+            "Students can choose to carry out a project on environmental issues, for they can conduct research on the topic of renewable energy."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Học sinh có thể chọn thực hiện một dự án về các vấn đề môi trường hoặc họ có thể tiến hành nghiên cứu về chủ đề năng lượng tái tạo.",
+            optionsDetails: "A. Dùng 'or' thể hiện sự lựa chọn giữa 2 phương án.\nB. Dùng 'but' chỉ sự phản bác không thích hợp.\nC. Dùng 'so' chỉ hậu quả kéo theo sai nghĩa.\nD. Dùng 'for' tương đương because chỉ nguyên nhân sai lệch.",
+            whyCorrect: "Từ ngữ nhận biết quan trọng là 'choose' (lựa chọn). Khi đưa ra các khả năng lựa chọn thay thế nhau, liên từ 'or' (hoặc) là đáp án duy nhất đúng pháp lý ngữ nghĩa.",
+            whyWrong: "Các phương án chứa liên từ khác phá hỏng hàm ý lựa chọn tự do của học sinh mà đề bài đã vạch định."
+        }
+    },
+    {
+        id: "ex25_4",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: My mother started a business trip last week. She hasn’t returned home yet.",
+        options: [
+            "My mother started a business trip last week but she hasn't returned home yet.",
+            "My mother started a business trip last week so she hasn't returned home yet.",
+            "My mother started a business trip last week and she hasn't returned home yet.",
+            "My mother started a business trip last week for she hasn't returned home yet."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Mẹ tôi đã bắt đầu một chuyến công tác vào tuần trước nhưng bà ấy vẫn chưa trở về nhà.",
+            optionsDetails: "A. Dùng 'but' diễn tả sự việc trái ngược kỳ vọng.\nB. Dùng 'so' thể hiện kết cục không chuẩn.\nC. Dùng 'and' nối sự việc thông thường.\nD. Dùng 'for' giải thích lý do.",
+            whyCorrect: "Từ 'yet' ở cuối câu gốc ám chỉ một sự việc chưa xảy ra dù đã mong đợi từ trước, biểu thị tính tương phản mạnh mẽ, phù hợp nhất với liên từ ghép 'but'.",
+            whyWrong: "Mối quan hệ nhân quả hay bổ sung đơn thuần không làm nổi bật được trạng thái đối lập của hành động đi chưa về này."
+        }
+    },
+    {
+        id: "ex25_5",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: I want to participate in a music club. I like singing and dancing.",
+        options: [
+            "I want to participate in a music club, for I like singing and dancing.",
+            "I want to participate in a music club, but I like singing and dancing.",
+            "I want to participate in a music club, so I like singing and dancing.",
+            "I want to participate in a music club, or I like singing and dancing."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Tôi muốn tham gia vào một câu lạc bộ âm nhạc, vì tôi thích ca hát và nhảy múa.",
+            optionsDetails: "A. Dùng 'for' đóng vai trò liên từ chỉ lý do (vì).\nB. Dùng 'but' trái nghĩa hoàn toàn.\nC. Dùng 'so' đảo ngược vị trí nhân quả.\nD. Dùng 'or' đưa ra phương án loại trừ.",
+            whyCorrect: "Vế thứ hai 'I like singing and dancing' giải thích nguyên nhân rõ ràng cho ước muốn ở vế đầu. Trong các liên từ đẳng lập FANBOYS, 'for' mang nghĩa là 'vì' dùng để chỉ lý do.",
+            whyWrong: "Nếu chọn 'so' thì câu phải đảo lại mới đúng logic, chọn 'but' hoặc 'or' thì làm câu lạc bộ mất đi ý nghĩa liên kết."
+        }
+    },
+    {
+        id: "ex25_6",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: His daughter was not well today. He took her to the doctor's.",
+        options: [
+            "His daughter was not well today, so he took her to the doctor's.",
+            "His daughter was not well today, but he took her to the doctor's.",
+            "His daughter was not well today, for he took her to the doctor's.",
+            "His daughter was not well today, or he took her to the doctor's."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Con gái ông ấy hôm nay không được khỏe, vì vậy ông ấy đã đưa cô bé đi khám bác sĩ.",
+            optionsDetails: "A. Dùng 'so' chỉ kết quả hiển nhiên từ nguyên nhân trước.\nB. Dùng 'but' chỉ sự ngược đời vô lý.\nC. Dùng 'for' biến hành động đi bác sĩ thành lý do bị ốm (Sai bết bát).\nD. Dùng 'or' loại trừ lựa chọn.",
+            whyCorrect: "Việc 'đưa đi bác sĩ' là kết quả trực tiếp sinh ra từ việc 'không khỏe'. Do đó ta dùng liên từ chỉ kết quả 'so' (vì vậy).",
+            whyWrong: "Sai kết nối logic sự việc đời thực nếu áp dụng các liên từ mang nghĩa phản bác hay loại trừ."
+        }
+    },
+    {
+        id: "ex25_7",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: They are going to build a new bridge across this river. Traveling will be much more convenient.",
+        options: [
+            "They are going to build a new bridge across this river, so traveling will be much more convenient.",
+            "They are going to build a new bridge across this river, but traveling will be much more convenient.",
+            "They are going to build a new bridge across this river, for traveling will be much more convenient.",
+            "They are going to build a new bridge across this river, or traveling will be much more convenient."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Họ chuẩn bị xây một cây cầu mới bắc qua con sông này, vì thế việc đi lại sẽ thuận tiện hơn rất nhiều.",
+            optionsDetails: "A. Dùng 'so' chỉ hệ quả tích cực chuẩn xác.\nB. Dùng 'but' tạo mâu thuẫn sai trái.\nC. Dùng 'for' chỉ nguyên nhân đảo lộn.\nD. Dùng 'or' chỉ khả năng lựa chọn.",
+            whyCorrect: "Việc đi lại thuận tiện hơn là kết cục/hệ quả tất yếu của hành động xây dựng cây cầu mới. Liên từ đẳng lập chỉ kết quả thích hợp nhất là 'so'.",
+            whyWrong: "Các từ khác không thể tạo lập được quan hệ nhân quả thuận chiều như ý đồ câu mong muốn."
+        }
+    },
+    {
+        id: "ex25_8",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: There are a lot of knowledgeable videos on YouTube. There are also meaningless videos.",
+        options: [
+            "There are a lot of knowledgeable videos on YouTube, but there are also meaningless videos.",
+            "There are a lot of knowledgeable videos on YouTube, so there are also meaningless videos.",
+            "There are a lot of knowledgeable videos on YouTube, for there are also meaningless videos.",
+            "There are a lot of knowledgeable videos on YouTube, or there are also meaningless videos."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Có rất nhiều video giàu kiến thức trên YouTube, nhưng cũng có những video vô nghĩa.",
+            optionsDetails: "A. Dùng 'but' phân định mặt tốt và mặt xấu tương phản.\nB. Dùng 'so' tạo quan hệ nhân quả vô lý.\nC. Dùng 'for' tạo mối quan hệ giải thích sai lệch.\nD. Dùng 'or' loại trừ thông tin.",
+            whyCorrect: "Hai tính từ 'knowledgeable' (am hiểu/bổ ích) và 'meaningless' (vô nghĩa) có tính chất đối chọi loại trừ nhau trực tiếp, đòi hỏi phải có liên từ phản tương 'but'.",
+            whyWrong: "Sự xuất hiện của video vô nghĩa không phải là kết quả hay nguyên nhân của video bổ ích nên loại ngay 'so' và 'for'."
+        }
+    },
+    {
+        id: "ex25_9",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: My parents work hard every day. They never complain about anything.",
+        options: [
+            "My parents work hard every day, but they never complain about anything.",
+            "My parents work hard every day, so they never complain about anything.",
+            "My parents work hard every day, or they never complain about anything.",
+            "My parents work hard every day, for they never complain about anything."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Bố mẹ tôi làm việc chăm chỉ mỗi ngày, nhưng họ chẳng bao giờ phàn nàn về bất cứ điều gì.",
+            optionsDetails: "A. Dùng 'but' nhấn mạnh đức tính tốt đẹp vượt trên hoàn cảnh vất vả.\nB. Dùng 'so' chỉ hệ quả chưa sát nghĩa gốc.\nC. Dùng 'or' chỉ sự lựa chọn lạc đề.\nD. Dùng 'for' chỉ nguyên do không ăn nhập.",
+            whyCorrect: "Lao động vất vả thông thường dễ dẫn đến mệt mỏi và kêu ca, việc 'không bao giờ phàn nàn' tạo nên thế tương phản bất ngờ, ca ngợi phẩm chất tốt, cần đi với 'but'.",
+            whyWrong: "Làm việc chăm chỉ không phải là nguyên nhân ép buộc họ không được phàn nàn, loại liên từ hệ quả 'so'."
+        }
+    },
+    {
+        id: "ex25_10",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: I think the festival will be full of fun. Many people will enjoy it.",
+        options: [
+            "I think the festival will be full of fun and many people will enjoy it.",
+            "I think the festival will be full of fun, but many people will enjoy it.",
+            "I think the festival will be full of fun, or many people will enjoy it.",
+            "I think the festival will be full of fun, for many people will enjoy it."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Tôi nghĩ lễ hội sẽ tràn đầy niềm vui và nhiều người sẽ yêu thích thích thú nó.",
+            optionsDetails: "A. Dùng 'and' liên kết chuỗi nhận định tích cực.\nB. Dùng 'but' làm hỏng mạch ý nghĩa tươi vui.\nC. Dùng 'or' chia rẽ khả năng xảy ra của sự việc.\nD. Dùng 'for' tạo suy luận ngược nghĩa.",
+            whyCorrect: "Hai nhận định mang tính đồng thuận, cùng hướng tới một viễn cảnh lễ hội vui tươi tươi đẹp, nối với nhau đơn giản bằng liên từ 'and'.",
+            whyWrong: "Các từ nối chỉ sự phản bác hoặc loại trừ làm câu văn mất đi tính liền mạch tự nhiên."
+        }
+    },
+    {
+        id: "ex25_11",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: My brother has grown up into an adult. He still enjoys playing with Lego.",
+        options: [
+            "My brother has grown up into an adult, but he still enjoys playing with Lego.",
+            "My brother has grown up into an adult, so he still enjoys playing with Lego.",
+            "My brother has grown up into an adult, and he still enjoys playing with Lego.",
+            "My brother has grown up into an adult, or he still enjoys playing with Lego."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Anh trai tôi đã trưởng thành thành một người lớn, nhưng anh ấy vẫn thích chơi với đồ chơi Lego.",
+            optionsDetails: "A. Dùng 'but' làm nổi bật sự đối lập hành vi tuổi tác.\nB. Dùng 'so' mang hàm nghĩa lớn lên dẫn đến thích chơi đồ trẻ con (Sai).\nC. Dùng 'and' chưa lột tả được hết sự đặc biệt của chữ 'still'.\nD. Dùng 'or' loại bỏ một trong hai vế thực tế.",
+            whyCorrect: "Người lớn (adult) thông thường không chơi đồ chơi trẻ con, việc anh ấy 'vẫn thích' (still enjoys) đòi hỏi một từ mang tính đối lập mạnh mẽ như 'but'.",
+            whyWrong: "Các từ liên kết thuận chiều không diễn tả trọn vẹn ngữ cảnh bất ngờ từ chữ 'still' đem lại."
+        }
+    },
+    {
+        id: "ex25_12",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: Today is my sister's birthday. My family will hold a surprise birthday party for her.",
+        options: [
+            "Today is my sister's birthday, so my family will hold a surprise birthday party for her.",
+            "Today is my sister's birthday, but my family will hold a surprise birthday party for her.",
+            "Today is my sister's birthday, for my family will hold a surprise birthday party for her.",
+            "Today is my sister's birthday, or my family will hold a surprise birthday party for her."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Hôm nay là sinh nhật của em gái tôi, vì vậy gia đình tôi sẽ tổ chức một bữa tiệc sinh nhật bất ngờ cho em ấy.",
+            optionsDetails: "A. Dùng 'so' chỉ hành động tất yếu ngày sinh nhật.\nB. Dùng 'but' phủ nhận niềm vui ngày sinh nhật.\nC. Dùng 'for' biến bữa tiệc thành lý do có ngày sinh nhật (Sai logic thời gian).\nD. Dùng 'or' lựa chọn một trong hai sự thật.",
+            whyCorrect: "Sinh nhật là nguyên nhân dẫn đến hành động tổ chức tiệc chúc mừng ăn theo. Cấu trúc nguyên nhân - kết quả thuận chiều bắt buộc dùng 'so'.",
+            whyWrong: "Mâu thuẫn hoặc đảo ngược nhân quả từ các từ khác sẽ biến đổi câu nói thành một câu phi logic."
+        }
+    },
+    {
+        id: "ex25_13",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: Yesterday, we had an English final exam in the morning. We had a Math exam in the afternoon.",
+        options: [
+            "Yesterday, we had an English final exam in the morning and we had a Math exam in the afternoon.",
+            "Yesterday, we had an English final exam in the morning but we had a Math exam in the afternoon.",
+            "Yesterday, we had an English final exam in the morning so we had a Math exam in the afternoon.",
+            "Yesterday, we had an English final exam in the morning or we had a Math exam in the afternoon."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Hôm qua, chúng tôi có bài thi cuối kỳ môn Tiếng Anh vào buổi sáng và chúng tôi có bài thi môn Toán vào buổi chiều.",
+            optionsDetails: "A. Dùng 'and' kết hợp liệt kê hai sự kiện tuần tự.\nB. Dùng 'but' tạo đối lập khi hai kỳ thi diễn ra bình thường.\nC. Dùng 'so' chỉ thi tiếng Anh đẻ ra thi Toán (Sai).\nD. Dùng 'or' bắt chọn lựa thi một trong hai môn.",
+            whyCorrect: "Đây là chuỗi hành động diễn ra liên tiếp theo mốc thời gian (sáng - chiều) mang ý nghĩa liệt kê bổ sung thông tin đầy đủ, sử dụng liên từ 'and' là chuẩn xác.",
+            whyWrong: "Không có tính chất phản bác hay nhân quả ràng buộc giữa hai bộ môn thi cử riêng biệt này."
+        }
+    },
+    {
+        id: "ex25_14",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: It has been ages since our last encounter. I still remember him clearly.",
+        options: [
+            "It has been ages since our last encounter, but I still remember him clearly.",
+            "It has been ages since our last encounter, so I still remember him clearly.",
+            "It has been ages since our last encounter, and I still remember him clearly.",
+            "It has been ages since our last encounter, or I still remember him clearly."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Đã lâu lắm rồi kể từ lần gặp gỡ cuối cùng của chúng tôi, nhưng tôi vẫn nhớ anh ấy một cách rõ ràng.",
+            optionsDetails: "A. Dùng 'but' nêu bật việc trí nhớ tốt dù thời gian trôi qua lâu.\nB. Dùng 'so' lập luận thời gian trôi lâu giúp nhớ rõ hơn (Sai thực tế đời sống).\nC. Dùng 'and' kết nối chưa bật rõ nghĩa phản sắc thái.\nD. Dùng 'or' mang tính chọn lựa không căn cứ.",
+            whyCorrect: "Thời gian trôi qua lâu (ages) thông thường sẽ làm phai mờ ký ức. Việc 'vẫn nhớ rõ' chính là phản tương phản, đòi hỏi liên từ 'but' đồng hành.",
+            whyWrong: "Thời gian cách xa không phải nguyên nhân tạo ra trí nhớ tốt nên loại bỏ 'so'."
+        }
+    },
+    {
+        id: "ex25_15",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: Nobody knew where the dog got lost. They reported it to the police.",
+        options: [
+            "Nobody knew where the dog got lost, so they reported it to the police.",
+            "Nobody knew where the dog got lost, but they reported it to the police.",
+            "Nobody knew where the dog got lost, for they reported it to the police.",
+            "Nobody knew where the dog got lost, or they reported it to the police."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Không ai biết chú chó bị lạc ở đâu, vì vậy họ đã trình báo việc đó với cảnh sát.",
+            optionsDetails: "A. Dùng 'so' chỉ hướng giải quyết từ sự bế tắc ban đầu.\nB. Dùng 'but' tạo đối chọi chưa sát nghĩa hành động.\nC. Dùng 'for' biến báo cảnh sát thành lý do chó đi lạc (Sai nghiêm trọng).\nD. Dùng 'or' tách rời hành động thực tế.",
+            whyCorrect: "Bởi vì không tìm thấy chú chó nên giải pháp đầu ra cần thiết là báo công an. Quan hệ nhân quả xuôi dòng bắt buộc chọn liên từ kết hợp 'so'.",
+            whyWrong: "Các phương án khác làm sai lệch động cơ trình báo và diễn biến sự việc thực tế."
+        }
+    },
+    {
+        id: "ex25_16",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: My mother was cleaning the house. I helped her sweep the floor.",
+        options: [
+            "My mother was cleaning the house, and I helped her sweep the floor.",
+            "My mother was cleaning the house, but I helped her sweep the floor.",
+            "My mother was cleaning the house, so I helped her sweep the floor.",
+            "My mother was cleaning the house, or I helped her sweep the floor."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Mẹ tôi đang dọn dẹp nhà cửa, và tôi đã giúp bà ấy quét sàn nhà.",
+            optionsDetails: "A. Dùng 'and' mô tả hai hành động cùng phụ giúp nhau ấm cúng.\nB. Dùng 'but' tạo mâu thuẫn gia đình vô lý.\nC. Dùng 'so' biến việc mẹ dọn dẹp thành ép buộc con quét nhà (Chưa đạt nghĩa tự nhiên bằng 'and').\nD. Dùng 'or' đưa ra lựa chọn loại trừ nhau.",
+            whyCorrect: "Hai hành động mang tính chất song song phối hợp làm việc nhà tốt đẹp, bổ sung thông tin hành động hỗ trợ lẫn nhau, liên từ kết hợp chuẩn nhất là 'and'.",
+            whyWrong: "Không có sự đối kháng hay ép buộc kết quả cực đoan giữa hai việc dọn dẹp phụ giúp này."
+        }
+    },
+    {
+        id: "ex25_17",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: My best friend is studying abroad. It is impossible for us to meet each other now.",
+        options: [
+            "My best friend is studying abroad, so it is impossible for us to meet each other now.",
+            "My best friend is studying abroad, but it is impossible for us to meet each other now.",
+            "My best friend is studying abroad, for it is impossible for us to meet each other now.",
+            "My best friend is studying abroad, or it is impossible for us to meet each other now."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Bạn thân nhất của tôi đang đi du học, vì thế bây giờ chúng tôi không thể gặp mặt nhau được.",
+            optionsDetails: "A. Dùng 'so' chỉ hệ quả hiển nhiên của việc khoảng cách địa lý xa xôi.\nB. Dùng 'but' tạo phản nghĩa không hợp logic đời sống.\nC. Dùng 'for' biến việc không thể gặp thành lý do bạn đi du học (Sai cấu trúc tư duy).\nD. Dùng 'or' phân chia hai khả năng ảo.",
+            whyCorrect: "Việc 'đi du học nước ngoài' (studying abroad) chính là nguyên nhân dẫn đến kết quả 'không thể trực tiếp gặp nhau'. Dùng liên từ 'so' để biểu thị hệ quả.",
+            whyWrong: "Khoảng cách xa xôi dẫn đến khó gặp là chuyện tự nhiên, không thể dùng liên từ mang ý nghĩa đối lập 'but'."
+        }
+    },
+    {
+        id: "ex25_18",
+        exercise: "Exercise 25: Combine the following two simple sentences into a compound sentence.",
+        question: "Gộp câu: I went down with the flu last week. I had to postpone my work.",
+        options: [
+            "I went down with the flu last week, so I had to postpone my work.",
+            "I went down with the flu last week, but I had to postpone my work.",
+            "I went down with the flu last week, for I had to postpone my work.",
+            "I went down with the flu last week, or I had to postpone my work."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Tôi bị nhiễm cúm vào tuần trước, vì vậy tôi đã phải hoãn lại công việc của mình.",
+            optionsDetails: "A. Dùng 'so' chỉ hành động hoãn việc do bị bệnh lý tác động.\nB. Dùng 'but' mang ý nghĩa bị cúm nhưng vẫn phải hoãn (Sai liên từ kết nối).\nC. Dùng 'for' biến hoãn việc thành lý do gây ra bệnh cúm (Lật ngược logic).\nD. Dùng 'or' chỉ sự hoán đổi giả định.",
+            whyCorrect: "Bị ốm (flu) là nguyên nhân chính, kéo theo kết quả tất yếu là phải hoãn công việc lại để nghỉ ngơi. Liên từ chỉ hậu quả thích ứng duy nhất là 'so'.",
+            whyWrong: "Cấu trúc câu khẳng định nguyên nhân đứng trước kết quả đứng sau loại ngay liên từ 'for' và 'but'."
+        }
+    },
+
+    // Exercise 26
+    {
+        id: "ex26_1",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: I don’t want to come out now. I must review my lesson. (besides)",
+        options: [
+            "I don't want to come out now; besides, I must review my lesson.",
+            "Besides I don't want to come out now, I must review my lesson.",
+            "I don't want to come out now besides I must review my lesson.",
+            "I don't want to come out now; besides I must review my lesson."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Tôi không muốn đi ra ngoài lúc này; ngoài ra, tôi phải ôn lại bài học của mình.",
+            optionsDetails: "A. Đúng chuẩn dấu chấm phẩy và dấu phẩy sau trạng từ liên kết.\nB. Sai cấu trúc đứng đầu câu làm thay đổi bản chất câu ghép.\nC. Thiếu toàn bộ hệ thống dấu câu ngăn cách mệnh đề độc lập.\nD. Thiếu dấu phẩy ngay sau chữ 'besides'.",
+            whyCorrect: "Theo quy tắc viết câu ghép với trạng từ liên kết (Conjunctive Adverb): Mệnh đề 1 + dấu chấm phẩy (;) + trạng từ + dấu phẩy (,) + mệnh đề 2. 'besides' mang ý nghĩa thêm vào đó, bổ sung lý do.",
+            whyWrong: "Vi phạm các nguyên tắc vàng về dấu câu trong ngữ pháp câu hợp thể tiếng Anh chính thống."
+        }
+    },
+    {
+        id: "ex26_2",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: She will not come back until Monday. During that time, what do we do? (meanwhile)",
+        options: [
+            "She will not come back until Monday; meanwhile, what do we do?",
+            "She will not come back until Monday meanwhile, what do we do?",
+            "She will not come back until Monday, meanwhile, what do we do?",
+            "Meanwhile she will not come back until Monday, what do we do?"
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Cô ấy sẽ không trở lại cho đến thứ Hai; trong thời gian đó/trong lúc này, chúng ta làm gì đây?",
+            optionsDetails: "A. Cú pháp chuẩn chỉnh với cặp dấu (; ... ,).\nB. Thiếu dấu chấm phẩy trước trạng từ.\nC. Dùng lỗi 'comma splice' (chỉ dùng hai dấu phẩy nối hai mệnh đề độc lập là sai quy định).\nD. Đặt sai vị trí của trạng từ chỉ hành động song song.",
+            whyCorrect: "Trạng từ 'meanwhile' (trong lúc đó) thay thế trọn vẹn cho cụm từ thời gian 'During that time'. Áp dụng chính xác thể thức dấu chấm phẩy liên kết câu ghép.",
+            whyWrong: "Sử dụng sai quy cách dấu câu ngăn cách khiến câu bị lỗi cấu trúc ngữ pháp nặng."
+        }
+    },
+    {
+        id: "ex26_3",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: We will have five days off this holiday. It is preceded by a couple of weekends. (moreover)",
+        options: [
+            "We will have five days off this holiday; moreover, it is preceded by a couple of weekends.",
+            "We will have five days off this holiday moreover, it is preceded by a couple of weekends.",
+            "We will have five days off this holiday, moreover it is preceded by a couple of weekends.",
+            "Moreover we will have five days off this holiday, it is preceded by a couple of weekends."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Chúng tôi sẽ có năm ngày nghỉ trong kỳ nghỉ này; hơn nữa, nó còn được đi trước bởi một vài ngày nghỉ cuối tuần.",
+            optionsDetails: "A. Đúng ngữ nghĩa bổ sung tăng cường thông tin nghỉ lễ.\nB. Lỗi dính chữ thiếu dấu chấm phẩy phân tách.\nC. Thiếu dấu phẩy sau trạng từ đứng giữa.\nD. Đặt từ nối sai vị trí logic liên kết mệnh đề.",
+            whyCorrect: "'moreover' (hơn thế nữa) được dùng để thêm một thông tin có mức độ quan trọng hoặc bổ sung mạnh mẽ cho vế trước. Đi kèm bộ dấu chuẩn (; moreover,).",
+            whyWrong: "Không tuân thủ cấu trúc phân tách hai mệnh đề độc lập có vị ngữ riêng biệt."
+        }
+    },
+    {
+        id: "ex26_4",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: The coffee shop provides free Wi-Fi. There are several high speed cable ports. (in addition)",
+        options: [
+            "The coffee shop provides free Wi-Fi access; in addition, there are several high speed cable ports.",
+            "The coffee shop provides free Wi-Fi access in addition there are several high speed cable ports.",
+            "In addition the coffee shop provides free Wi-Fi access, there are several high speed cable ports.",
+            "The coffee shop provides free Wi-Fi access, in addition, there are several high speed cable ports."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Quán cà phê cung cấp dịch vụ truy cập Wi-Fi miễn phí; thêm vào đó, có một vài cổng cáp tốc độ cao.",
+            optionsDetails: "A. Sắp xếp hoàn hảo cấu trúc tăng tiến thông tin dịch vụ.\nB. Vi phạm nghiêm trọng luật dấu câu câu ghép.\nC. Thay đổi sai lệch trật tự thông tin gốc.\nD. Lỗi Comma Splice khi cố tình dùng dấu phẩy trước cụm 'in addition'.",
+            whyCorrect: "Cụm từ liên kết 'in addition' mang nghĩa là 'thêm vào đó'. Khi nối hai câu đơn độc lập tạo câu ghép, vị trí lý tưởng là đứng sau dấu chấm phẩy và trước dấu phẩy.",
+            whyWrong: "Dấu câu lỏng lẻo hoặc đặt sai vị trí liên từ làm câu bị vụn vỡ."
+        }
+    },
+    {
+        id: "ex26_5",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: She first disagreed to join our journey. She changed her mind later. (however)",
+        options: [
+            "She first disagreed to join our journey; however, she changed her mind later.",
+            "She first disagreed to join our journey however, she changed her mind later.",
+            "She first disagreed to join our journey, however she changed her mind later.",
+            "However she first disagreed to join our journey, she changed her mind later."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Đầu tiên cô ấy không đồng ý tham gia cuộc hành trình của chúng tôi; tuy nhiên, cô ấy đã thay đổi ý định sau đó.",
+            optionsDetails: "A. Cú pháp kinh điển thể hiện tính tương phản 'however'.\nB. Lỗi thiếu dấu chấm phẩy ngắt mệnh đề.\nC. Sai quy chuẩn khi chỉ dùng dấu phẩy nối câu ghép với trạng từ.\nD. Biến 'however' thành trạng từ đứng đầu câu sai ngữ cảnh phân mạch.",
+            whyCorrect: "'however' (tuy nhiên) diễn tả sự quay ngoắt đối lập ý kiến (từ từ chối sang đồng ý). Bắt buộc đứng giữa cặp dấu câu chuẩn mực (; however,).",
+            whyWrong: "Lỗi dùng sai dấu câu với 'however' là một trong những lỗi học sinh hay gặp và bị trừ điểm nặng nhất."
+        }
+    },
+    {
+        id: "ex26_6",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: He was very tired. He went on walking. (nevertheless)",
+        options: [
+            "He was very tired; nevertheless, he went on walking.",
+            "He was very tired nevertheless, he went on walking.",
+            "He was very tired, nevertheless, he went on walking.",
+            "Nevertheless he was very tired, he went on walking."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Anh ấy đã rất mệt mỏi; tuy nhiên/ấy thế mà, anh ấy vẫn tiếp tục bước đi.",
+            optionsDetails: "A. Đúng ngữ pháp chuẩn mực trạng từ chỉ sự nhượng bộ.\nB. Thiếu dấu chấm phẩy ngăn cách.\nC. Lỗi dấu phẩy kép dính câu độc lập.\nD. Sai vị trí logic biểu đạt ý chí hành động.",
+            whyCorrect: "'nevertheless' nghĩa là 'tuy nhiên/mặc dù vậy', chỉ một kết quả bất chấp khó khăn ở vế trước. Cần tuân thủ cấu trúc câu ghép: [S+V]; nevertheless, [S+V].",
+            whyWrong: "Các phương án còn lại vi phạm quy định viết hoa viết thường hoặc dấu câu ngắt câu học thuật."
+        }
+    },
+    {
+        id: "ex26_7",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: I was ill yesterday. I could not come. (therefore)",
+        options: [
+            "I was ill yesterday; therefore, I could not come.",
+            "I was ill yesterday therefore, I could not come.",
+            "I was ill yesterday, therefore, I could not come.",
+            "Therefore I was ill yesterday, I could not come."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Hôm qua tôi bị ốm; do đó, tôi đã không thể đến được.",
+            optionsDetails: "A. Cấu trúc nguyên nhân hệ quả trang trọng với 'therefore'.\nB. Thiếu dấu chấm phẩy thần thánh trước trạng từ.\nC. Lỗi comma splice kinh điển.\nD. Đặt trạng từ hệ quả lên đầu câu làm đảo lộn nguyên nhân.",
+            whyCorrect: "'therefore' (vì vậy/do đó) nối kết mệnh đề nguyên nhân (bị ốm) sang kết quả (không thể đến). Bắt buộc định dạng viết cấu trúc là (; therefore,).",
+            whyWrong: "Không sử dụng dấu câu đúng cách sẽ biến hai câu đơn thành một chuỗi từ vụn vỡ bất hợp pháp."
+        }
+    },
+    {
+        id: "ex26_8",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: Austin studied a lot. He got great results. (consequently)",
+        options: [
+            "Austin studied a lot; consequently, he got great results.",
+            "Austin studied a lot consequently, he got great results.",
+            "Austin studied a lot, consequently, he got great results.",
+            "Consequently Austin studied a lot, he got great results."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Austin đã học rất nhiều; kết quả là, anh ấy đã đạt được những kết quả tuyệt vời.",
+            optionsDetails: "A. Kết hợp chuẩn xác từ ngữ và dấu hiệu phân tách.\nB. Dính chữ do thiếu dấu ngắt câu hợp lệ.\nC. Dùng sai dấu phẩy thay vì chấm phẩy.\nD. Biến từ kết quả thành từ khởi đầu sai logic.",
+            whyCorrect: "'consequently' (hậu quả là/kết quả là) chỉ ra kết cục rực rỡ từ quá trình nỗ lực học tập trước đó. Tuân thủ nghiêm ngặt bộ dấu câu ghép nhà nghề.",
+            whyWrong: "Lỗi cấu trúc dấu câu làm mất điểm trực tiếp trong các bài thi viết luận chính quy."
+        }
+    },
+    {
+        id: "ex26_9",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: It’s no trouble at all. It’s a great pleasure to know your tradition. (on the contrary)",
+        options: [
+            "It's no trouble at all; on the contrary, it's a great pleasure to know your tradition.",
+            "It's no trouble at all on the contrary, it's a great pleasure to know your tradition.",
+            "On the contrary it's no trouble at all, it's a great pleasure to know your tradition.",
+            "It's no trouble at all, on the contrary, it's a great pleasure to know your tradition."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Chẳng có chút rắc rối nào cả; ngược lại, thật là một niềm vinh hạnh lớn lao khi được biết về truyền thống của bạn.",
+            optionsDetails: "A. Dùng cụm từ kết nối trái ngược cực diện hoàn mỹ.\nB. Thiếu ký tự chấm phẩy ngắt mệnh đề chính.\nC. Đặt cụm từ đảo nghĩa ở vị trí không ăn nhập thông tin.\nD. Lỗi ngắt câu bằng dấu phẩy yếu ớt.",
+            whyCorrect: "'on the contrary' nghĩa là 'ngược lại', nhấn mạnh ý kiến phía sau hoàn toàn trái ngược với định kiến tiêu cực tiềm ẩn ở vế trước. Đi cùng cấu trúc bộ dấu (; on the contrary,).",
+            whyWrong: "Sử dụng sai định dạng cấu trúc dấu câu sẽ phá hủy tính liên kết mạch lạc của bài văn."
+        }
+    },
+    {
+        id: "ex26_10",
+        exercise: "Exercise 26: Write compound sentences using the conjunctive adverb in brackets.",
+        question: "Viết lại câu sử dụng trạng từ liên kết: Please increase the air-conditioner’s temperature. We will be frozen here. (otherwise)",
+        options: [
+            "Please increase the air-conditioner's temperature; otherwise, we will be frozen here.",
+            "Please increase the air-conditioner's temperature otherwise, we will be frozen here.",
+            "Please increase the air-conditioner's temperature, otherwise, we will be frozen here.",
+            "Otherwise please increase the air-conditioner's temperature, we will be frozen here."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "Làm ơn hãy tăng nhiệt độ điều hòa lên; nếu không thì, chúng ta sẽ chết cống ở đây mất.",
+            optionsDetails: "A. Đúng cấu trúc điều kiện giả định phủ định 'otherwise'.\nB. Trạng từ dính liền từ trước thiếu dấu chấm phẩy nghiêm trọng.\nC. Lỗi dùng dấu phẩy dính câu độc lập.\nD. Sai lệch trật tự logic nhắc nhở hành động.",
+            whyCorrect: "'otherwise' nghĩa là 'nếu không thì', dùng để cảnh báo về một hậu quả tiêu cực sẽ xảy ra nếu lời khuyên/yêu cầu ở vế 1 không được thực hiện.",
+            whyWrong: "Thiếu bộ dấu (; ...,) đặc trưng của trạng từ liên kết khiến câu viết sai tiêu chuẩn ngữ pháp học thuật."
+        }
+    },
+
+    // Exercise 27
+    {
+        id: "ex27_1",
+        exercise: "Exercise 27: Choose (A, B, C, or D) to indicate the correct arrangement of the sentences to make a meaningful paragraph/letter in each of the following questions.",
+        question: "Sắp xếp các câu sau thành bức thư hoàn chỉnh:\n" +
+                  "<div class='sub-segment'>Dear Alex,</div>" +
+                  "<div class='sub-segment'>a. I use it a lot to talk with friends and share photos, and it's great to see what everyone is doing.</div>" +
+                  "<div class='sub-segment'>b. Overall, I think it's a good way to stay in touch.</div>" +
+                  "<div class='sub-segment'>c. I wanted to tell you about social media.</div>" +
+                  "<div class='sub-segment'>d. It's also really useful for school projects, as we can quickly share information.</div>" +
+                  "<div class='sub-segment'>e. Sometimes I spend too much time on it, but it helps me feel connected. Best, Mai</div>",
+        options: [
+            "c - a - e - d - b",
+            "a - c - d - e - b",
+            "c - e - a - d - b",
+            "b - a - d - c - e"
+        ],
+        correct: 0, // Corresponding to c-a-e-d-b (which is C in the text, but let's make it the index 0 for dynamic checking)
+        explanation: {
+            translation: "Thứ tự dịch nghĩa logic:\n(c) Tớ muốn kể với cậu về mạng xã hội.\n(a) Tớ dùng nó rất nhiều để nói chuyện với bạn bè và chia sẻ ảnh...\n(e) Đôi khi tớ dành quá nhiều thời gian cho nó, nhưng nó giúp tớ cảm thấy được kết nối...\n(d) Nó cũng thực sự hữu ích cho các dự án ở trường...\n(b) Nhìn chung, tớ nghĩ đó là một cách tốt để giữ liên lạc.",
+            optionsDetails: "A. Trình tự mạch lạc từ giới thiệu chủ đề đến chi tiết và tổng kết.\nB. Nhảy ngay vào chi tiết hành động khi chưa giới thiệu chủ đề tổng.\nC. Đưa câu phản đề lên quá sớm làm gãy mạch kể chuyện.\nD. Đưa từ kết luận 'Overall' lên vị trí đầu thư là sai hoàn toàn logic.",
+            whyCorrect: "Câu (c) phải mở đầu vì đóng vai trò giới thiệu chủ đề bức thư ('about social media'). Tiếp theo là (a) kể về việc sử dụng thông thường, (e) đưa ra mặt trái nhỏ nhưng vẫn chốt bằng sự kết nối, (d) bổ sung lợi ích học đường ('also really useful'), và cuối cùng là (b) mang từ dấu hiệu tổng kết kết bài 'Overall'.",
+            whyWrong: "Sắp xếp sai làm đảo lộn trình tự phát triển ý tưởng từ tổng quan đến chi tiết của thể thức viết thư tay."
+        }
+    },
+    {
+        id: "ex27_2",
+        exercise: "Exercise 27: Choose (A, B, C, or D) to indicate the correct arrangement of the sentences to make a meaningful paragraph/letter in each of the following questions.",
+        question: "Sắp xếp các câu sau thành đoạn văn hợp lý:\n" +
+                  "<div class='sub-segment'>a. It also helps us learn from each other and build good relationships.</div>" +
+                  "<div class='sub-segment'>b. Teamwork skills are very important for success in school and life.</div>" +
+                  "<div class='sub-segment'>c. Therefore, developing strong teamwork skills is essential for everyone.</div>" +
+                  "<div class='sub-segment'>d. When people combine their different ideas, they can solve problems better.</div>" +
+                  "<div class='sub-segment'>e. I believe that working together makes tasks easier and more fun.</div>",
+        options: [
+            "b - e - d - a - c",
+            "b - a - d - e - c",
+            "e - d - a - b - c",
+            "d - a - e - b - c"
+        ],
+        correct: 0, // b-e-d-a-c
+        explanation: {
+            translation: "Dịch nghĩa chuỗi logic:\n(b) Kỹ năng làm việc nhóm rất quan trọng cho sự thành công ở trường học và cuộc sống.\n(e) Tôi tin rằng làm việc cùng nhau giúp công việc dễ dàng và vui vẻ hơn.\n(d) Khi mọi người kết hợp các ý tưởng khác nhau của họ, họ có thể giải quyết vấn đề tốt hơn.\n(a) Nó cũng giúp chúng ta học hỏi lẫn nhau và xây dựng mối quan hệ tốt đẹp.\n(c) Do đó, phát triển kỹ năng làm việc nhóm mạnh mẽ là cần thiết cho tất cả mọi người.",
+            optionsDetails: "A. Thứ tự hoàn hảo đi từ câu chủ đề đến diễn giải chi tiết rồi đến câu chốt hạ cấu trúc diễn dịch.\nB. Đưa từ liên kết phụ 'also' lên trước sự việc chính là sai logic.\nC. Mở đầu bằng cảm quan cá nhân không vững chãi bằng định nghĩa tổng quát câu (b).\nD. Đặt câu giải trình điều kiện lên đầu làm đoạn văn bị cụt lủn.",
+            whyCorrect: "Câu (b) chứa định nghĩa và từ khóa cốt lõi làm câu chủ đề (Topic sentence). Tiếp theo câu (e) đưa góc nhìn cá nhân ủng hộ, câu (d) làm rõ cách thức hoạt động, câu (a) bổ sung thêm lợi ích nhờ từ khóa 'also', và kết thúc bằng câu chứa trạng từ hệ quả chốt luận điểm 'Therefore' ở câu (c).",
+            whyWrong: "Các trật tự khác vi phạm nguyên lý bố cục nghị luận phát triển ý logic từ nông đến sâu."
+        }
+    },
+
+    // Exercise 28 - Part 1
+    {
+        id: "ex28_1_1",
+        exercise: "Exercise 28: Choose (A, B, C, or D) to indicate the correct answer to each of the following questions.",
+        question: "Sắp xếp thứ tự (a-c) để điền vào chỗ trống của đoạn văn sau:<br><em>Many students experience stress at school. This can be a big challenge for them. ____________.</em><br>" +
+                  "<strong>a.</strong> To help with this, students could try to organize their time better, perhaps using a planner for homework.<br>" +
+                  "<strong>b.</strong> I think it happens because of lots of homework, difficult tests, and sometimes even pressure from friends.<br>" +
+                  "<strong>c.</strong> When students feel stressed, they might have trouble sleeping, feel sad, or find it hard to focus in class.",
+        options: [
+            "b - c - a",
+            "a - c - b",
+            "c - b - a",
+            "b - a - c"
+        ],
+        correct: 0, // b - c - a
+        explanation: {
+            translation: "Nhiều học sinh trải qua căng thẳng ở trường học. Đây có thể là thách thức lớn với các em. (b) Tôi nghĩ nó xảy ra vì nhiều bài tập, bài thi khó... -> (c) Khi học sinh căng thẳng, các em có thể mất ngủ... -> (a) Để giúp giải quyết điều này, học sinh nên tổ chức thời gian tốt hơn...",
+            optionsDetails: "A. Thứ tự chuẩn logic tự nhiên: Nguyên nhân -> Triệu chứng/Hệ quả -> Giải pháp.\nB. Đưa giải pháp lên trước nguyên nhân là phản khoa học lập luận.\nC. Đưa triệu chứng lên trước nguyên nhân làm câu văn bị đảo lộn mạch đọc.\nD. Đặt giải pháp xen giữa nguyên nhân và hệ quả gây đứt gãy mạch ý.",
+            whyCorrect: "Mạch suy nghĩ logic của một văn bản giải quyết vấn đề luôn tuân theo công thức kinh điển: Tìm hiểu nguyên nhân gây ra hiện trạng ('it happens because of...') -> Thống kê tác động tiêu cực thực tế hiện hữu ('When students feel stressed, they might...') -> Đề xuất giải pháp khắc phục triệt để hành động ('To help with this...'). Do đó chuỗi b - c - a là bất biến.",
+            whyWrong: "Phá vỡ quy luật diễn tiến tâm lý lập luận Problem-Solution của văn phong tiếng Anh học thuật."
+        }
+    },
+    {
+        id: "ex28_1_2",
+        exercise: "Exercise 28: Choose (A, B, C, or D) to indicate the correct answer to each of the following questions.",
+        question: "Chọn câu có thể KẾT THÚC đoạn văn trên một cách phù hợp nhất (END the text most appropriately).",
+        options: [
+            "Therefore, managing stress is important for a student's well-being.",
+            "School can be very hard sometimes.",
+            "Homework is a big part of school life.",
+            "Teachers give a lot of tests."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "A. Do đó, việc quản lý căng thẳng là rất quan trọng đối với sức khỏe và hạnh phúc của học sinh.\nB. Trường học đôi khi có thể rất khó khăn.\nC. Bài tập về nhà là một phần lớn của đời sống học đường.\nD. Giáo viên cho rất nhiều bài kiểm tra.",
+            optionsDetails: "A. Câu kết đoạn (Concluding sentence) xuất sắc chứa từ chốt 'Therefore' tóm gọn toàn bộ ý nghĩa bài viết.\nB. Quá chung chung và lặp lại vấn đề tiêu cực một cách sáo rỗng.\nC. Chỉ tập trung vào một khía cạnh bài tập nhỏ lẻ.\nD. Lỗi quy chụp đổ lỗi cho giáo viên, không mang tính đúc kết bài học.",
+            whyCorrect: "Một câu kết thúc lý tưởng cho đoạn văn bàn về stress cần phải nâng tầm nhận thức và tóm gọn được thông điệp cốt lõi của bài: Nhấn mạnh tầm quan trọng của việc kiểm soát stress ('managing stress is important') để bảo vệ bản thân.",
+            whyWrong: "Các đáp án khác chỉ là các câu đơn lẻ kể lể sự việc, không hoàn thành nhiệm vụ tổng kết bài viết nghị luận."
+        }
+    },
+
+    // Exercise 28 - Part 2
+    {
+        id: "ex28_2_1",
+        exercise: "Exercise 28: Choose (A, B, C, or D) to indicate the correct answer to each of the following questions.",
+        question: "Chọn CÂU CHỦ ĐỀ (Topic sentence) phù hợp nhất để MỞ ĐẦU vị trí (1) của đoạn văn phía dưới:<br><em>(1) ______. Psychologically, feeling stressed often makes teenagers pessimistic and unhappy, which can lead to several problems...</em>",
+        options: [
+            "Stress can seriously affect teenagers in many ways.",
+            "Teenagers face many challenges during their school years.",
+            "Good sleep is important for a teenager's health.",
+            "Managing stress is a crucial skill for young people."
+        ],
+        correct: 0,
+        explanation: {
+            translation: "A. Căng thẳng có thể ảnh hưởng nghiêm trọng đến thanh thiếu niên theo nhiều cách.\nB. Thanh thiếu niên đối mặt với nhiều thách thức trong những năm học đường.\nC. Giấc ngủ ngon rất quan trọng đối với sức khỏe của thanh thiếu niên.\nD. Quản lý căng thẳng là một kỹ năng tối quan trọng đối với những người trẻ tuổi.",
+            optionsDetails: "A. Bao quát hoàn hảo nội dung liệt kê tác động tâm sinh lý ở các câu sau.\nB. Quá rộng, thách thức học đường bao gồm nhiều thứ chứ không riêng gì stress.\nC. Sai lệch trọng tâm bài viết hướng vào giấc ngủ.\nD. Nhắm vào kỹ năng quản lý trong khi các câu sau đang kể về tác hại tồi tệ.",
+            whyCorrect: "Ngay sau vị trí trống, câu văn viết: 'Psychologically, feeling stressed often makes...' (Về mặt tâm lý, cảm giác căng thẳng thường làm cho...). Từ khóa dẫn đường 'stressed' kết hợp với trạng từ 'Psychologically' chứng minh bài viết đang khai thác sâu các khía cạnh tác động ('affect in many ways') của stress lên đời sống tuổi teen.",
+            whyWrong: "Chọn câu mở đầu sai hướng khiến toàn bộ hệ thống lập chứng cứ bổ trợ phía sau bị lạc điệu."
+        }
+    },
+    {
+        id: "ex26_2_2",
+        exercise: "Exercise 28: Choose (A, B, C, or D) to indicate the correct answer to each of the following questions.",
+        question: "Sắp xếp thứ tự các câu (a-c) để điền vào chỗ trống vị trí số (2) của đoạn văn:<br>" +
+                  "<strong>a.</strong> Beyond school, stress can also cause health issues, such as losing or putting on weight, and even difficulty sleeping.<br>" +
+                  "<strong>b.</strong> These negative effects highlight the need for effective stress management techniques.<br>" +
+                  "<strong>c.</strong> Additionally, emotional well-being plays a significant role in academic success.",
+        options: [
+            "a - c - b",
+            "b - a - c",
+            "c - b - a",
+            "a - b - c"
+        ],
+        correct: 0, // a - c - b
+        explanation: {
+            translation: "Thứ tự liên kết lập luận chuẩn xác:\n(a) Bên ngoài trường học, căng thẳng cũng có thể gây ra các vấn đề sức khỏe, chẳng hạn như sụt cân hoặc tăng cân...\n(c) Thêm vào đó, sức khỏe cảm xúc đóng một vai trò quan trọng trong thành công học thuật.\n(b) Những tác động tiêu cực này làm nổi bật nhu cầu về các kỹ thuật quản lý căng thẳng hiệu quả.",
+            optionsDetails: "A. Trình tự đi từ mở rộng không gian tác hại (Beyond school) -> Liên kết bổ sung (Additionally) -> Câu đúc kết chuyển giao hành động (These negative effects).\nB. Đưa câu kết 'These negative effects' lên đầu làm cụt mất thông tin mở rộng sau đó.\nC. Đảo lộn đại từ quy chiếu tổng kết.\nD. Trình tự chắp vá không tạo được sự mượt mà cho kết bài.",
+            whyCorrect: "Trước vị trí (2) đang nói về tác hại học đường. Câu (a) mở đầu bằng 'Beyond school' (Vượt ra ngoài phạm vi trường học) để mở rộng không gian tác hại sang thể chất. Câu (c) thêm thắt ý nghĩa bằng từ nối 'Additionally'. Câu (b) chứa cụm từ quy chiếu 'These negative effects' (Những tác động tiêu cực này) dùng để thâu tóm tất thảy tác hại từ đầu bài đến giờ rồi chốt hạ vấn đề.",
+            whyWrong: "Đặt câu quy chiếu 'These negative effects' trước khi liệt kê hết các tác hại physical sẽ làm mất đi giá trị bao quát ngữ nghĩa của đại từ chỉ định."
+        }
+    }
+];
+
+// Shuffle array algorithm for option randomizer
+function shuffleArray(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex != 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+}
+
+// Generate the Quiz Interface Dynamically
+function renderQuiz() {
+    const wrapper = document.getElementById('quiz-wrapper');
+    let currentExercise = "";
+
+    quizData.forEach((q, index) => {
+        // If new exercise section, inject a magnificent title divider
+        if (q.exercise !== currentExercise) {
+            currentExercise = q.exercise;
+            const exDiv = document.createElement('div');
+            exDiv.className = 'exercise-title';
+            exDiv.innerText = currentExercise;
+            wrapper.appendChild(exDiv);
+        }
+
+        // Create Card Element
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card_${q.id}`;
+
+        // Question text formulation
+        const qText = document.createElement('div');
+        qText.className = 'question-text';
+        qText.innerHTML = `<strong>Câu ${index + 1}:</strong> ${q.question}`;
+        card.appendChild(qText);
+
+        // Grid for options
+        const optionsGrid = document.createElement('div');
+        optionsGrid.className = 'options-grid';
+
+        // Prepare choices with original indices tracked for correct answer verification
+        let choices = q.options.map((opt, i) => ({ text: opt, originalIndex: i }));
+        choices = shuffleArray(choices); // Gamification feature: Shuffle answers randomly!
+
+        choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = choice.text;
+            btn.onclick = () => checkAnswer(q.id, choice.originalIndex, q.correct, btn, card);
+            optionsGrid.appendChild(btn);
+        });
+
+        card.appendChild(optionsGrid);
+
+        // Explanation dynamic hidden framework insertion
+        const expDiv = document.createElement('div');
+        expDiv.className = 'explanation';
+        expDiv.id = `exp_${q.id}`;
+        expDiv.innerHTML = `
+            <h4>💡 GIẢI THÍCH CHI TIẾT TỪ MS LÊ HẰNG ENGLISH:</h4>
+            <p><span class="explanation-section-title">1. Dịch nghĩa câu hỏi:</span> ${q.explanation.translation}</p>
+            <p><span class="explanation-section-title">2. Phân tích các đáp án:</span><br>${q.explanation.optionsDetails.replace(/\n/g, '<br>')}</p>
+            <p><span class="explanation-section-title">3. Tại sao đáp án này ĐÚNG?</span> ${q.explanation.whyCorrect}</p>
+            <p><span class="explanation-section-title">4. Tại sao các đáp án khác SAI?</span> ${q.explanation.whyWrong}</p>
+        `;
+        card.appendChild(expDiv);
+
+        wrapper.appendChild(card);
+    });
+}
+
+// User state tracker
+const userAnswers = {};
+
+function checkAnswer(questionId, selectedIdx, correctIdx, clickedBtn, cardElement) {
+    // If already answered this specific card, frozen to prevent exploitation
+    if (userAnswers[questionId] !== undefined) return;
+
+    userAnswers[questionId] = {
+        selected: selectedIdx,
+        isCorrect: selectedIdx === correctIdx
+    };
+
+    const allButtons = cardElement.querySelectorAll('.option-btn');
+    allButtons.forEach(btn => btn.classList.add('disabled'));
+
+    if (selectedIdx === correctIdx) {
+        // SUCCESS MINDSET
+        clickedBtn.classList.add('correct-ans');
+        playSound('correct');
+        // Confetti burst animation trigger
+        confetti({
+            particleCount: 80,
+            spread: 60,
+            origin: { y: 0.8 }
+        });
+    } {
+        // WRONG ATTEMPT
+        clickedBtn.classList.add('wrong-ans');
+        // Find and highlight correct answer for peer teaching visibility
+        allButtons.forEach(btn => {
+            // We search for correct answer using data check or re-evaluation if needed, 
+            // for absolute ease, let's locate the button text match or track via map if complex.
+        });
+        
+        cardElement.classList.add('shake');
+        playSound('wrong');
+        setTimeout(() => cardElement.classList.remove('shake'), 400);
+    }
+
+    // Force highlight the correct answer text so student knows the true path immediately
+    // across all options on the grid
+    const quizItem = quizData.find(item => item.id === questionId);
+    const correctText = quizItem.options[correctIdx];
+    allButtons.forEach(btn => {
+        if (btn.innerHTML === correctText) {
+            btn.classList.add('correct-ans');
+        }
+    });
+
+    // Automatically reveal the hyper-detailed explanation box below the card instantly!
+    document.getElementById(`exp_${questionId}`).style.display = 'block';
+}
+
+function submitFullQuiz() {
+    const totalQuestions = quizData.length;
+    let correctCount = 0;
+    let answeredCount = 0;
+
+    quizData.forEach(q => {
+        if (userAnswers[q.id] !== undefined) {
+            answeredCount++;
+            if (userAnswers[q.id].isCorrect) {
+                correctCount++;
+            }
+        }
+    });
+
+    if (answeredCount < totalQuestions) {
+        if (!confirm(`Con mới làm được ${answeredCount}/${totalQuestions} câu thôi. Con có chắc chắn muốn nộp bài tổng kết luôn không?`)) {
+            return;
+        }
+    }
+
+    const percentage = (correctCount / totalQuestions) * 100;
+    let feedback = "";
+
+    if (percentage < 50) {
+        feedback = "Điểm lần này chưa cao lắm, con cố gắng đọc kĩ giải thích đáp án và làm lại nha. Cô tin con sẽ làm tốt hơn ở lần sau!";
+    } else if (percentage >= 60 && percentage <= 80) {
+        feedback = "Con đã có tiến bộ khá ổn rồi, con cố gắng đọc kĩ giải thích đáp án và làm lại nha. Cô tin con sẽ làm tốt hơn ở lần sau!";
+    } else {
+        feedback = "Làm tốt lắm, con cố gắng ring điểm 10 ở lần sau nha!";
+    }
+
+    document.getElementById('scoreDisplay').innerText = `${correctCount}/${totalQuestions}`;
+    document.getElementById('feedbackDisplay').innerText = feedback;
+    document.getElementById('scoreModal').style.display = 'flex';
+
+    if (percentage >= 80) {
+        // Big firework confetti victory celebrate!
+        let duration = 3 * 1000;
+        let end = Date.now() + duration;
+
+        (function frame() {
+            confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
+            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
+            if (Date.now() < end) { requestAnimationFrame(frame); }
+        }());
+    }
+}
+
+function closeModal() {
+    document.getElementById('scoreModal').style.display = 'none';
+}
+
+// Initial Bootup trigger
+window.onload = () => {
+    renderQuiz();
+};
+</script>
+
+</body>
+</html>
